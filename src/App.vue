@@ -105,16 +105,96 @@ export default {
       return false;
     },
 
-    // Checks if all squares are filled with no winner
+    // Checks if the game will end in a tie
     checkTie() {
+      // 1. Collect all empty cells
+      const emptyCells = [];
       for (let r = 0; r < 3; r++) {
         for (let c = 0; c < 3; c++) {
           if (this.board[r][c] === "") {
-            return false;
+            emptyCells.push([r, c]);
           }
         }
       }
-      return true;
+      
+      // 2. If more than 2 empty cells, we can't guarantee a tie yet
+      if (emptyCells.length > 2) {
+        return false;
+      }
+
+      // 3. If no empty cells, it's definitely a tie (no winner found so far)
+      if (emptyCells.length === 0) {
+        return true;
+      }
+
+      // 4. If exactly 1 empty cell, do the one-move look-ahead
+      if (emptyCells.length === 1) {
+        const [r, c] = emptyCells[0];
+        // Try current player's move
+        this.board[r][c] = this.currentPlayer;
+        const canWin = this.checkWin(this.currentPlayer);
+        // Undo move
+        this.board[r][c] = "";
+
+        // If current player can win by taking this last cell, not a tie
+        return !canWin;
+      }
+
+      // 5. If exactly 2 empty cells, we do a 2-move look-ahead:
+      if (emptyCells.length === 2) {
+        // label them for convenience
+        const [r1, c1] = emptyCells[0];
+        const [r2, c2] = emptyCells[1];
+
+        // We'll try all possible scenarios of the next two moves:
+        //    currentPlayer -> otherPlayer
+        //    currentPlayer -> otherPlayer
+        // across both empty cells
+
+        const otherPlayer = this.currentPlayer === "X" ? "O" : "X";
+
+        // Helper function to test a scenario:
+        // Place the current player in cellA, check win,
+        //   if not a win, place the other player in cellB, check win
+        // Return true if neither move leads to a win.
+        const testScenario = (cellA, cellB) => {
+          // First move: current player
+          this.board[cellA[0]][cellA[1]] = this.currentPlayer;
+          let winFirstMove = this.checkWin(this.currentPlayer);
+
+          if (!winFirstMove) {
+            // Second move: other player
+            this.board[cellB[0]][cellB[1]] = otherPlayer;
+            let winSecondMove = this.checkWin(otherPlayer);
+            // Revert second move
+            this.board[cellB[0]][cellB[1]] = "";
+            
+            // Revert first move
+            this.board[cellA[0]][cellA[1]] = "";
+            
+            // If second move is also not a win, scenario is “no immediate winner”
+            return !winFirstMove && !winSecondMove;
+          } else {
+            // Revert first move if it was a winning scenario
+            this.board[cellA[0]][cellA[1]] = "";
+            return false; 
+          }
+        };
+
+        // Scenario A: (r1,c1) -> currentPlayer, (r2,c2) -> otherPlayer
+        const scenarioA = testScenario([r1, c1], [r2, c2]);
+
+        // Scenario B: (r2,c2) -> currentPlayer, (r1,c1) -> otherPlayer
+        const scenarioB = testScenario([r2, c2], [r1, c1]);
+
+        // If in *both* scenarios there's no winner after two moves,
+        // then we can call it a tie. If either scenario leads to a win,
+        // that means a tie is not guaranteed.
+        return scenarioA && scenarioB;
+      }
+
+      // Fallback (should not happen logically, but just in case):
+      return false;
     },
 
     // Reset the board and status
