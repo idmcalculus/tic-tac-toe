@@ -1,0 +1,33 @@
+<div id="app">
+    <!-- Display either the next-player status or the winner/tie message -->
+    <div class="status">{{ status }}</div>
+    
+    <!-- Reset button -->
+    <button class="reset" @click="resetGame">Reset</button>
+    
+    <!-- 3x3 board -->
+    <div class="board-container">
+		<template v-for="(row, rowIndex) in 3" :key="rowIndex">
+			<div class="row">
+				<button
+					v-for="(col, colIndex) in 3"
+					:key="colIndex"
+					class="square"
+					:class="[
+						// If this cell is the recently placed one, animate it
+						recentlyUpdatedCell[0] === rowIndex && recentlyUpdatedCell[1] === colIndex
+							? 'square-placed'
+							: '',
+						// If this cell is part of a real winning combo, highlight it
+						isWinningCell(rowIndex, colIndex) ? 'win-highlight' : ''
+					]"
+					:data-value="board[rowIndex][colIndex]"
+					:disabled="gameOver"
+					@click="makeMove(rowIndex, colIndex)"
+				>
+					{{ board[rowIndex][colIndex] }}
+				</button>
+			</div>
+		</template>
+    </div>
+</div>

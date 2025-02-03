@@ -1,0 +1,122 @@
+.board-container {
+	display: inline-block;
+	background: #fafafa;
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid #ddd;
+	margin-bottom: 20px;
+}
+  
+/* Each row in the 3x3 grid */
+.row {
+	display: flex;
+	margin: 5px 0;
+}
+  
+/* Each square (button) in the grid */
+.square {
+	margin: 0 5px;
+	width: 60px;
+	height: 60px;
+	display: flex; 
+	align-items: center;
+	justify-content: center;
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #2196F3; /* Default color (used by X) */
+	background: #fff;
+	border: 2px solid #ccc;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background 0.2s, box-shadow 0.2s;
+}
+
+/* Hover and Focus states */
+.square:hover,
+.square:focus {
+	background: #f0f0f0;
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.3);
+}
+
+.square[disabled] {
+	cursor: not-allowed;
+}
+
+.square[disabled]:hover,
+.square[disabled]:focus {
+	background: #fff;
+	box-shadow: none;
+}
+
+/* O in orange */
+.square:not(:empty)[data-value="O"] {
+	color: #FF5722;
+}
+
+/* If the square is not empty, it’s taken */
+.square:not(:empty) {
+	cursor: default; 
+}
+
+/* Animate newly placed marks */
+.square-placed {
+	animation: highlight-placed 0.3s ease-out;
+}
+
+@keyframes highlight-placed {
+	0% {
+	background-color: #ffff88; /* Light yellow at start */
+	}
+	100% {
+	background-color: #fff; 
+	}
+}
+
+/* Highlight the winning squares */
+.win-highlight {
+	background-color: #fffa9e !important; /* Pale yellow */
+	border-color: #FFD700; /* Gold border */
+}
+
+/* Status message */
+.status {
+	font-size: 1.6rem;
+	font-weight: 600;
+	margin-bottom: 15px;
+	text-align: center;
+	color: #333;
+}
+
+/* Reset button */
+button.reset {
+	padding: 8px 24px;
+	font-size: 1rem;
+	font-weight: 500;
+	cursor: pointer;
+	background: #4CAF50;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	margin-bottom: 20px;
+	transition: background 0.2s, box-shadow 0.2s;
+}
+
+button.reset:hover {
+	background: #45a049;
+}
+
+/* Outer container */
+#app {
+	width: 100%;
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 30px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	text-align: center; 
+}
