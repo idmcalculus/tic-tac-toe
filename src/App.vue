@@ -6,14 +6,14 @@
     <!-- Reset button -->
     <button class="reset" @click="resetGame">Reset</button>
     
-    <!-- 3x3 board, using v-for exactly as requested -->
+    <!-- 3x3 board -->
     <template v-for="row in 3" :key="row">
       <div class="row">
         <button
           v-for="button in 3"
           :key="button"
           class="square"
-          style="width:40px;height:40px;"
+          :data-value="board[row - 1][button - 1]"
           @click="makeMove(row - 1, button - 1)"
         >
           {{ board[row - 1][button - 1] }}
@@ -135,11 +135,35 @@ export default {
 <style scoped>
 .row {
   margin-bottom: 5px;
+  display: flex;
 }
 
 .square {
   margin-right: 5px;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  width: 60px !important;
+  height: 60px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ccc;
+  background: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Style for X */
+.square:not(:empty) {
+  color: #2196F3;
+}
+
+/* Style specifically for O */
+.square:not(:empty)[data-value="O"] {
+  color: #FF5722;
+}
+
+.square:hover {
+  background: #f5f5f5;
 }
 
 .status {
@@ -147,19 +171,33 @@ export default {
   margin-bottom: 15px;
   padding: 10px;
   font-weight: bold;
+  color: #333;
 }
 
 button.reset {
   margin-bottom: 20px;
-  padding: 8px 16px;
+  padding: 8px 24px;
   font-size: 1rem;
   cursor: pointer;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+button.reset:hover {
+  background: #45a049;
 }
 
 #app {
-  padding: 20px;
+  padding: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
 }
 </style>
